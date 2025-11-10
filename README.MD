@@ -95,5 +95,71 @@ Ia bukan widget, tapi _reference_ yang memungkinkan widget:
 - **Mengakses data leluhur**, seperti tema (`Theme.of(context)`) atau navigasi (`Navigator.of(context)`).
 
 **Contoh penggunaan di proyek:**
-```dart
-_showSnackBar(context, 'Kamu telah menekan tombol All Products');
+"```dart"
+"_showSnackBar(context, 'Kamu telah menekan tombol All Products')";
+
+---
+
+### 6. Jelaskan konsep `Hot Reload` pada Flutter dan apa bedanya dengan `Hot Restart`?
+
+`Hot Reload` dan `Hot Restart` adalah fitur di Flutter untuk mempercepat proses _development_, namun keduanya bekerja dengan cara yang berbeda:
+`Hot Reload`
+- **Apa yang dilakukannya:** Menyuntikkan file _source code_ yang telah diperbarui ke dalam Dart Virtual Machine (VM) yang sedang berjalan. Setelah itu, Flutter secara otomatis membangun ulang widget tree, memungkinkan kita melihat perubahan UI secara instan.
+- **Kecepatan:** Sangat cepat (biasanya kurang dari 1-2 detik).
+- **State Aplikasi:** State (keadaan) aplikasi tetap terjaga. Misalnya, jika kita sedang mengisi form atau berada di halaman kedua, kita akan tetap di sana setelah hot reload. Ini ideal untuk tweaking UI atau logika tampilan.
+
+`Hot Restart`
+- **Apa yang dilakukannya:** Me-reset seluruh Dart VM dan memulai ulang aplikasi dari awal.
+- **Kecepatan:** Lebih lambat dari hot reload tetapi jauh lebih cepat daripada menghentikan dan menjalankan ulang aplikasi sepenuhnya (cold boot).
+- **State Aplikasi:** State aplikasi hilang dan kembali ke nilai awalnya. Ini berguna jika kita membuat perubahan besar pada state atau struktur data aplikasi dan perlu menguji alur aplikasi dari awal.
+
+---
+
+### 7. Jelaskan perbedaan antara `Navigator.push()` dan `Navigator.pop()`!
+
+`Navigator.push()` dan `Navigator.pop()` adalah dua metode inti untuk mengelola tumpukan (stack) halaman dalam navigasi Flutter.
+
+-   **`Navigator.push(context, ...)`**: Berfungsi untuk **menambahkan** halaman baru ke atas tumpukan. Ini seperti menumpuk piring baru di atas tumpukan piring yang sudah ada. Pengguna akan melihat halaman baru tersebut. Halaman yang lama masih ada di bawahnya, menunggu untuk ditampilkan kembali.
+    * **Contoh:** Digunakan saat pindah dari `MenuPage` ke `ProductFormPage`.
+
+-   **`Navigator.pop(context)`**: Berfungsi untuk **menghapus** halaman paling atas dari tumpukan. Ini seperti mengambil piring teratas dari tumpukan, sehingga piring di bawahnya (halaman sebelumnya) sekarang terlihat.
+    * **Contoh:** Digunakan setelah menekan tombol "Simpan" di `ProductFormPage` untuk kembali ke halaman sebelumnya.
+
+---
+
+### 8. Jelaskan perbedaan utama antara `Navigator.push()` dan `Navigator.pushReplacement()`!
+
+Perbedaan utamanya terletak pada apa yang terjadi pada halaman *saat ini* (halaman asal).
+
+-   **`Navigator.push()`**: **Menyimpan** halaman saat ini di tumpukan dan menambahkan halaman baru di atasnya. Pengguna bisa menekan tombol "kembali" (back) untuk kembali ke halaman asal.
+    * **Kapan dipakai:** Saat membuka halaman detail atau form (misal: `MenuPage` → `ProductFormPage`).
+
+-   **`Navigator.pushReplacement()`**: **Membuang** halaman saat ini dan menggantinya dengan halaman baru di tumpukan. Pengguna **tidak bisa** menekan tombol "kembali" untuk kembali ke halaman asal (karena sudah dibuang).
+    * **Kapan dipakai:** Saat pindah dari halaman `LoginPage` ke `MenuPage`. Kita tidak ingin pengguna bisa kembali ke halaman login setelah mereka berhasil login.
+
+---
+
+### 9. Jelaskan kegunaan `GlobalKey<FormState>`!
+
+`GlobalKey<FormState>` adalah kunci unik yang berfungsi sebagai "pegangan" atau referensi untuk sebuah widget `Form`.
+
+Kegunaan utamanya adalah untuk berinteraksi dengan `Form` dari luar widget `Form` itu sendiri. Di proyek ini, kita menggunakannya di dalam tombol "Simpan" untuk:
+
+1.  **Validasi (`_formKey.currentState!.validate()`)**: Memerintahkan `Form` untuk menjalankan fungsi `validator` pada semua `TextFormField` di dalamnya. Jika semua valid, ia mengembalikan `true`.
+2.  **Menyimpan (`_formKey.currentState!.save()`)**: (Tidak digunakan di proyek ini) Jika `onSaved` diimplementasikan pada `TextFormField`, ini akan memicunya.
+3.  **Reset (`_formKey.currentState!.reset()`)**: Mengosongkan semua field dalam form.
+
+Tanpa `GlobalKey`, tombol "Simpan" tidak memiliki cara untuk "berbicara" dengan widget `Form` dan memicu validasi.
+
+---
+
+### 10. Jelaskan kegunaan `TextEditingController`!
+
+`TextEditingController` adalah objek yang digunakan untuk **mengontrol teks** di dalam sebuah `TextField` atau `TextFormField`.
+
+Kegunaan utamanya adalah:
+1.  **Mendapatkan Nilai (`_nameController.text`)**: Membaca teks yang sedang diketik oleh pengguna di dalam field. Kita menggunakannya saat menekan tombol "Simpan" untuk mengambil data nama, harga, dan deskripsi.
+2.  **Mengatur Nilai (`_nameController.text = "Nilai Baru"`)**: Mengubah teks di dalam field secara programatis (misalnya, untuk mengisi form dengan data *default*).
+3.  **Mendengarkan Perubahan**: Controller bisa diberi *listener* untuk bereaksi setiap kali pengguna mengetik satu huruf.
+
+Tanpa *controller*, kita tidak bisa dengan mudah mengambil data dari *field* saat tombol ditekan.
