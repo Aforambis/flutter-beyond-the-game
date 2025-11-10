@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:football_shop/models/product.dart';
-import 'package:football_shop/widgets/left_drawer.dart'; 
+import 'package:football_shop/models/product.dart'; 
+import 'package:football_shop/widgets/left_drawer.dart';
 
 class ProductListPage extends StatelessWidget {
   const ProductListPage({super.key});
@@ -51,6 +51,16 @@ class ProductListPage extends StatelessWidget {
                       fontSize: 14,
                       color: Colors.white70,
                     ),
+                  ),
+                  const SizedBox(height: 10), 
+                  
+                  Text(
+                    'Ditambahkan: ${product.dateAdded.toLocal().toString().split(' ')[0]}',
+                    style: const TextStyle(fontSize: 12, color: Colors.white54),
+                  ),
+                  Text(
+                    'User ID: ${product.user}',
+                    style: const TextStyle(fontSize: 12, color: Colors.white54),
                   ),
                 ],
               ),

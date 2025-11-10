@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:football_shop/models/product.dart'; 
-import 'package:football_shop/widgets/left_drawer.dart'; 
+import 'package:football_shop/widgets/left_drawer.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -11,7 +11,6 @@ class ProductFormPage extends StatefulWidget {
 
 class _ProductFormPageState extends State<ProductFormPage> {
   final _formKey = GlobalKey<FormState>();
-  
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -23,14 +22,15 @@ class _ProductFormPageState extends State<ProductFormPage> {
         title: const Text('Tambah Produk Baru'),
         centerTitle: true,
       ),
-      drawer: const LeftDrawer(), 
+      drawer: const LeftDrawer(),
       body: Form(
-        key: _formKey, 
-        child: SingleChildScrollView( 
+        key: _formKey,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Field Nama Produk
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -60,7 +60,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   filled: true,
                   fillColor: const Color(0xFF1F1F1F),
                 ),
-                keyboardType: TextInputType.number, 
+                keyboardType: TextInputType.number,
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Harga tidak boleh kosong!";
@@ -83,7 +83,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   filled: true,
                   fillColor: const Color(0xFF1F1F1F),
                 ),
-                maxLines: 4, 
+                maxLines: 4,
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Deskripsi tidak boleh kosong!";
@@ -104,11 +104,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Buat objek Product baru
                     Product newProduct = Product(
                       name: _nameController.text,
                       price: int.parse(_priceController.text),
                       description: _descriptionController.text,
+                      dateAdded: DateTime.now(),
+                      user: 1, 
                     );
                     
                     ProductStorage.products.add(newProduct);
@@ -126,7 +127,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
                           ),
                         ),
                       );
-
                     Navigator.pop(context);
                   }
                 },
