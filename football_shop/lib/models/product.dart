@@ -1,17 +1,27 @@
+import 'package:uuid/uuid.dart';
+
+var uuid = const Uuid();
+
 class Product {
+  final String id;          
+  final int user;          
+  final int auctionSeason;  
+  
   final String name;
-  final int price;
   final String description;
-  final DateTime dateAdded;
-  final int user;      
+  final double startPrice;  
+  final String? thumbnail;   
+  final String category;    
 
   Product({
-    required this.name,
-    required this.price,
-    required this.description,
-    required this.dateAdded,
     required this.user,
-  });
+    required this.auctionSeason,
+    required this.name,
+    required this.description,
+    required this.startPrice,
+    this.thumbnail,
+    required this.category,
+  }) : id = uuid.v4(); 
 }
 
 class ProductStorage {
