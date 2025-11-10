@@ -127,39 +127,32 @@ Ia bukan widget, tapi _reference_ yang memungkinkan widget:
 
 ---
 
-### 8. Jelaskan perbedaan utama antara `Navigator.push()` dan `Navigator.pushReplacement()`!
+### 8. Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten?
+Hierarki widget ini adalah kunci untuk membuat aplikasi terasa konsisten dan profesional:
+- **`Scaffold`**: Digunakan sebagai widget "pembungkus" level atas untuk setiap halaman (LoginPage, MenuPage, ProductFormPage, ProductListPage). Ini menyediakan kerangka dasar yang konsisten untuk meletakkan AppBar, body, dan Drawer.
+- **`AppBar`**: Ditempatkan di dalam Scaffold di setiap halaman. Konsistensi visualnya dijamin oleh ThemeData di main.dart, yang mengatur appBarTheme (warna latar 0xFF1F1F1F dan gaya teks) secara global untuk seluruh aplikasi.
+- **`Drawer`**: Dibuat sebagai satu widget terpisah (LeftDrawer di widgets/left_drawer.dart). Widget ini kemudian diimpor dan dipanggil di dalam Scaffold pada setiap halaman yang membutuhkannya (MenuPage, ProductFormPage, ProductListPage). Dengan cara ini, jika ada perubahan pada menu navigasi, saya hanya perlu mengedit satu file (left_drawer.dart) dan perubahannya akan langsung terlihat di semua halaman.
 
-Perbedaan utamanya terletak pada apa yang terjadi pada halaman *saat ini* (halaman asal).
-
--   **`Navigator.push()`**: **Menyimpan** halaman saat ini di tumpukan dan menambahkan halaman baru di atasnya. Pengguna bisa menekan tombol "kembali" (back) untuk kembali ke halaman asal.
-    * **Kapan dipakai:** Saat membuka halaman detail atau form (misal: `MenuPage` → `ProductFormPage`).
-
--   **`Navigator.pushReplacement()`**: **Membuang** halaman saat ini dan menggantinya dengan halaman baru di tumpukan. Pengguna **tidak bisa** menekan tombol "kembali" untuk kembali ke halaman asal (karena sudah dibuang).
-    * **Kapan dipakai:** Saat pindah dari halaman `LoginPage` ke `MenuPage`. Kita tidak ingin pengguna bisa kembali ke halaman login setelah mereka berhasil login.
+Kombinasi ketiganya memastikan bahwa setiap halaman memiliki header yang sama, background yang sama, dan (jika perlu) menu navigasi samping yang identik.
 
 ---
 
-### 9. Jelaskan kegunaan `GlobalKey<FormState>`!
-
-`GlobalKey<FormState>` adalah kunci unik yang berfungsi sebagai "pegangan" atau referensi untuk sebuah widget `Form`.
-
-Kegunaan utamanya adalah untuk berinteraksi dengan `Form` dari luar widget `Form` itu sendiri. Di proyek ini, kita menggunakannya di dalam tombol "Simpan" untuk:
-
-1.  **Validasi (`_formKey.currentState!.validate()`)**: Memerintahkan `Form` untuk menjalankan fungsi `validator` pada semua `TextFormField` di dalamnya. Jika semua valid, ia mengembalikan `true`.
-2.  **Menyimpan (`_formKey.currentState!.save()`)**: (Tidak digunakan di proyek ini) Jika `onSaved` diimplementasikan pada `TextFormField`, ini akan memicunya.
-3.  **Reset (`_formKey.currentState!.reset()`)**: Mengosongkan semua field dalam form.
-
-Tanpa `GlobalKey`, tombol "Simpan" tidak memiliki cara untuk "berbicara" dengan widget `Form` dan memicu validasi.
+### 9. Apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form?
+Layout widget ini sangat penting untuk membuat form yang rapi dan fungsional:
+- **`Padding`**: Kelebihannya adalah memberi "ruang napas" visual. Tanpa Padding, elemen form akan menempel langsung di pinggir layar, membuatnya terlihat sempit dan sulit dibaca.
+  **Contoh Penggunaan:** Di product_form_page.dart, saya tidak menggunakan Padding secara langsung, tetapi menggunakan properti padding di dalam SingleChildScrollView (padding: const EdgeInsets.all(24.0)) yang memiliki fungsi yang sama persis, yaitu memberi jarak 24 piksel di sekeliling Column yang berisi form.
+- **`SingleChildScrollView`**: Kelebihannya adalah mencegah error "Bottom Overflow" (konten terpotong di bagian bawah). Ini krusial pada halaman form.
+  **Contoh Penggunaan:** Di product_form_page.dart, Form dibungkus dengan SingleChildScrollView. Saat pengguna mengetuk TextFormField dan keyboard virtual muncul, SingleChildScrollView memungkinkan pengguna untuk scroll ke bawah untuk melihat dan mengisi field yang mungkin terhalang oleh keyboard.
+- **`ListView`**: Kelebihannya adalah menampilkan daftar data yang dinamis dan bisa di-scroll (mirip seperti SingleChildScrollView tapi khusus untuk daftar).
+  **Contoh Penggunaan:** Walaupun tidak dipakai untuk membangun form-nya (saya pakai Column di dalam SingleChildScrollView untuk itu), ListView dipakai di product_list_page.dart untuk menampilkan hasil dari form. ListView.builder secara efisien merender setiap Product yang tersimpan di ProductStorage.products sebagai Card yang bisa di-scroll.
 
 ---
 
-### 10. Jelaskan kegunaan `TextEditingController`!
-
-`TextEditingController` adalah objek yang digunakan untuk **mengontrol teks** di dalam sebuah `TextField` atau `TextFormField`.
-
-Kegunaan utamanya adalah:
-1.  **Mendapatkan Nilai (`_nameController.text`)**: Membaca teks yang sedang diketik oleh pengguna di dalam field. Kita menggunakannya saat menekan tombol "Simpan" untuk mengambil data nama, harga, dan deskripsi.
-2.  **Mengatur Nilai (`_nameController.text = "Nilai Baru"`)**: Mengubah teks di dalam field secara programatis (misalnya, untuk mengisi form dengan data *default*).
-3.  **Mendengarkan Perubahan**: Controller bisa diberi *listener* untuk bereaksi setiap kali pengguna mengetik satu huruf.
-
-Tanpa *controller*, kita tidak bisa dengan mudah mengambil data dari *field* saat tombol ditekan.
+### 10. Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten?
+Identitas visual yang konsisten diatur secara terpusat di file `lib/main.dart` di dalam `MaterialApp`, menggunakan properti theme: `ThemeData(...)`.
+Dengan mendefinisikan tema di satu tempat, semua widget di seluruh aplikasi akan mengikutinya secara otomatis. Penyesuaian yang saya lakukan:
+- **`Tema Gelap`**: Mengatur brightness: Brightness.dark sebagai dasar tema.
+- **`Warna Latar`**: Mengatur scaffoldBackgroundColor: const Color(0xFF121212) untuk memberi warna abu-abu gelap yang konsisten di body setiap Scaffold.
+- **`Warna Aksen/Utama`**: Mengatur primaryColor: Colors.blueAccent sebagai warna "brand" utama. Ini otomatis dipakai oleh ElevatedButton dan _ShopButton di menu_page.dart.
+- **`Font Kustom`**: Mengatur fontFamily: GoogleFonts.poppins().fontFamily untuk memastikan semua Text di aplikasi menggunakan font Poppins, memberikan tampilan yang unik dan seragam.
+- **`Tema AppBar`**: Mengatur appBarTheme secara spesifik (backgroundColor: const Color(0xFF1F1F1F)) agar semua AppBar memiliki warna yang sedikit berbeda dari body, lengkap dengan gaya teks yang seragam (titleTextStyle).
