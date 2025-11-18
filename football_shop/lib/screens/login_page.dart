@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:football_shop/providers/user_session.dart';
 import 'package:football_shop/screens/menu_page.dart'; 
+import 'package:football_shop/screens/registration_page.dart'; // ADDED
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -83,15 +86,36 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async { // CHANGED TO ASYNC
                 String username = _usernameController.text;
                 String password = _passwordController.text;
 
                 if (username.isNotEmpty && password.isNotEmpty) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MenuPage()),
-                  );
+                  final userSession = context.read<UserSession>();
+                  bool success = await userSession.login(username, password);
+
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login Successful!'), backgroundColor: Colors.green));
+                    // Navigasi ke menu utama dan hapus riwayat navigasi
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MenuPage()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: const Text('Login failed. Check your credentials.'),
+                          backgroundColor: Colors.redAccent,
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      );
+                  }
                 } else {
                   ScaffoldMessenger.of(context)
                     ..hideCurrentSnackBar()
@@ -112,6 +136,14 @@ class _LoginPageState extends State<LoginPage> {
                 'Login',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
+            ),
+            // ADD REGISTRATION BUTTON
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const RegistrationPage()));
+              },
+              child: const Text('Don\'t have an account? Register here!', style: TextStyle(color: Colors.blueAccent)),
             ),
           ],
         ),

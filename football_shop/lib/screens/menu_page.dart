@@ -57,31 +57,37 @@ class MenuPage extends StatelessWidget {
               const SizedBox(height: 48),
 
               _ShopButton(
-                text: 'All Products',
+                text: 'All Products (API)', // Renamed for clarity
                 icon: Icons.shopping_bag_outlined,
                 color: Colors.blueAccent,
                 onPressed: () {
+                  // Navigasi ke List Page, filter OFF
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ProductListPage()),
+                        builder: (context) => const ProductListPage(isUserFiltered: false)),
                   );
                 },
               ),
               const SizedBox(height: 16),
 
               _ShopButton(
-                text: 'My Products',
+                text: 'My Products (API)', // Renamed for clarity
                 icon: Icons.person_pin_rounded,
                 color: Colors.green,
                 onPressed: () {
-                  _showSnackBar(context, 'Kamu telah menekan tombol My Products');
+                  // Navigasi ke List Page, filter ON
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProductListPage(isUserFiltered: true)),
+                  );
                 },
               ),
               const SizedBox(height: 16),
 
               _ShopButton(
-                text: 'Create Product',
+                text: 'Create Product (Lokal)', // Renamed for clarity
                 icon: Icons.add_shopping_cart,
                 color: Colors.redAccent,
                 onPressed: () {
